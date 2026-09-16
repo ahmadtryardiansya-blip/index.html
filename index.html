@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KueManager - Hikmah Kue</title>
+
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#1565c0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f3f7fc;
+  color:#222;
+  min-height:100vh;
+}
+
+header{
+  background:linear-gradient(135deg,#0d47a1,#1976d2);
+  color:white;
+  padding:18px 15px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.header-title{
+  font-size:22px;
+  font-weight:bold;
+}
+
+.header-sub{
+  font-size:13px;
+  margin-top:4px;
+  opacity:.9;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:15px;
+}
+
+.menu{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.menu button{
+  border:none;
+  padding:13px 5px;
+  border-radius:10px;
+  background:white;
+  color:#1565c0;
+  font-weight:bold;
+  box-shadow:0 2px 7px rgba(0,0,0,.1);
+  cursor:pointer;
+}
+
+.menu button.active{
+  background:#1565c0;
+  color:white;
+}
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+.card{
+  background:white;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:15px;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.card h2{
+  font-size:19px;
+  color:#1565c0;
+  margin-bottom:13px;
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.stat{
+  background:white;
+  border-radius:13px;
+  padding:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.stat-title{
+  color:#666;
+  font-size:12px;
+}
+
+.stat-value{
+  font-size:20px;
+  font-weight:bold;
+  color:#1565c0;
+  margin-top:6px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccd6e0;
+  border-radius:8px;
+  margin-top:6px;
+  margin-bottom:10px;
+  font-size:14px;
+  background:white;
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+label{
+  font-size:13px;
+  font-weight:bold;
+  color:#444;
+}
+
+button.primary{
+  width:100%;
+  background:#1565c0;
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button.success{
+  width:100%;
+  background:#2e7d32;
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button.danger{
+  width:100%;
+  background:#c62828;
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button.secondary{
+  width:100%;
+  background:#eceff1;
+  color:#263238;
+  border:none;
+  padding:12px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  font-size:13px;
+}
+
+th,td{
+  padding:9px 7px;
+  border-bottom:1px solid #e2e6ea;
+  text-align:left;
+}
+
+th{
+  background:#eaf2fb;
+  color:#1565c0;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.badge.green{
+  background:#dff5e3;
+  color:#237a32;
+}
+
+.badge.red{
+  background:#fde0e0;
+  color:#b71c1c;
+}
+
+.badge.yellow{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:20px;
+}
+
+.alert{
+  padding:12px;
+  border-radius:9px;
+  margin-bottom:12px;
+  font-size:13px;
+}
+
+.alert-info{
+  background:#e3f2fd;
+  color:#0d47a1;
+}
+
+hr{
+  border:none;
+  border-top:1px solid #eee;
+  margin:15px 0;
+}
+
+.result-box{
+  background:#f4f8fc;
+  padding:12px;
+  border-radius:10px;
+  margin:10px 0;
+}
+
+.result-line{
+  display:flex;
+  justify-content:space-between;
+  margin:6px 0;
+}
+
+.big-number{
+  font-size:25px;
+  font-weight:bold;
+  color:#1565c0;
+}
+
+footer{
+  text-align:center;
+  padding:25px 10px;
+  color:#777;
+  font-size:12px;
+}
+
+@media(max-width:600px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .menu{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .menu button{
+    font-size:11px;
+    padding:11px 3px;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .stat-value{
+    font-size:17px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-title">🍰 KueManager</div>
+  <div class="header-sub">Manajemen Usaha Hikmah Kue</div>
+</header>
+
+<div class="container">
+
+<!-- MENU -->
+<div class="menu">
+  <button class="active" onclick="showSection('dashboard',this)">Dashboard</button>
+  <button onclick="showSection('penjualan',this)">Penjualan</button>
+  <button onclick="showSection('stok',this)">Stok</button>
+  <button onclick="showSection('produk',this)">Produk</button>
+  <button onclick="showSection('pelanggan',this)">Pelanggan</button>
+  <button onclick="showSection('supplier',this)">Supplier</button>
+  <button onclick="showSection('pengeluaran',this)">Pengeluaran</button>
+  <button onclick="showSection('laporan',this)">Laporan</button>
+  <button onclick="showSection('pengaturan',this)">Data</button>
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+<section id="dashboard" class="section active">
+
+<div class="card">
+  <h2>Dashboard Hikmah Kue</h2>
+  <div class="alert alert-info">
+    Selamat datang di KueManager. Semua data tersimpan otomatis di HP ini.
+  </div>
+</div>
+
+<div class="stats">
+
+  <div class="stat">
+    <div class="stat-title">Stok Kue</div>
+    <div class="stat-value" id="dashStock">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">Terjual Hari Ini</div>
+    <div class="stat-value" id="dashSold">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">Omzet Hari Ini</div>
+    <div class="stat-value" id="dashOmzet">Rp0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">Laba Kotor Hari Ini</div>
+    <div class="stat-value" id="dashProfit">Rp0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">Pengeluaran Hari Ini</div>
+    <div class="stat-value" id="dashExpense">Rp0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-title">Kas Hari Ini</div>
+    <div class="stat-value" id="dashCash">Rp0</div>
+  </div>
+
+</div>
+
+<div class="card">
+  <h2>Ringkasan Hari Ini</h2>
+
+  <div class="result-box">
+    <div class="result-line">
+      <span>Omzet</span>
+      <b id="todayOmzet">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Modal barang terjual</span>
+      <b id="todayModal">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Laba kotor</span>
+      <b id="todayProfit">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Pengeluaran</span>
+      <b id="todayExpense">Rp0</b>
+    </div>
+
+    <hr>
+
+    <div class="result-line">
+      <span><b>Kas bersih</b></span>
+      <b class="big-number" id="todayCash">Rp0</b>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ================= PENJUALAN ================= -->
+<section id="penjualan" class="section">
+
+<div class="card">
+  <h2>Tambah Penjualan</h2>
+
+  <label>Produk</label>
+  <select id="saleProduct"></select>
+
+  <label>Jumlah</label>
+  <input id="saleQty" type="number" min="1" value="1">
+
+  <label>Harga Jual / Biji</label>
+  <input id="salePrice" type="number" value="2000">
+
+  <label>Modal / Biji</label>
+  <input id="saleCost" type="number" value="1600">
+
+  <label>Pelanggan</label>
+  <select id="saleCustomer"></select>
+
+  <label>Jenis Penjualan</label>
+  <select id="saleType">
+    <option value="Eceran">Eceran</option>
+    <option value="Reseller">Reseller</option>
+    <option value="Toko">Toko Lain</option>
+  </select>
+
+  <label>Catatan</label>
+  <textarea id="saleNote" placeholder="Contoh: pesan 50 biji"></textarea>
+
+  <button class="secondary" onclick="hitungPenjualan()">Hitung</button>
+
+  <div class="result-box">
+    <div class="result-line">
+      <span>Total Penjualan</span>
+      <b id="saleTotal">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Total Modal</span>
+      <b id="saleTotalCost">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Laba</span>
+      <b id="saleProfit">Rp0</b>
+    </div>
+  </div>
+
+  <button class="success" onclick="simpanPenjualan()">
+    Simpan Penjualan
+  </button>
+</div>
+
+<div class="card">
+  <h2>Riwayat Penjualan</h2>
+
+  <input
+    id="searchSales"
+    placeholder="Cari penjualan..."
+    oninput="renderSales()"
+  >
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Produk</th>
+          <th>Qty</th>
+          <th>Omzet</th>
+          <th>Laba</th>
+        </tr>
+      </thead>
+      <tbody id="salesTable"></tbody>
+    </table>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ================= STOK ================= -->
+<section id="stok" class="section">
+
+<div class="card">
+  <h2>Tambah Stok</h2>
+
+  <label>Produk</label>
+  <select id="stockProduct"></select>
+
+  <label>Jumlah</label>
+  <input id="stockQty" type="number" min="1" value="40">
+
+  <label>Modal / Biji</label>
+  <input id="stockCost" type="number" value="1600">
+
+  <label>Supplier</label>
+  <select id="stockSupplier"></select>
+
+  <button class="success" onclick="simpanStok()">
+    Tambah Stok
+  </button>
+</div>
+
+<div class="card">
+  <h2>Status Stok</h2>
+  <div id="stockList"></div>
+</div>
+
+</section>
+
+
+<!-- ================= PRODUK ================= -->
+<section id="produk" class="section">
+
+<div class="card">
+  <h2>Tambah Produk</h2>
+
+  <label>Nama Produk</label>
+  <input id="productName" placeholder="Contoh: Roti Semangka">
+
+  <label>Harga Modal</label>
+  <input id="productCost" type="number" value="1600">
+
+  <label>Harga Jual Eceran</label>
+  <input id="productRetail" type="number" value="2000">
+
+  <label>Harga Reseller</label>
+  <input id="productReseller" type="number" value="1700">
+
+  <button class="success" onclick="simpanProduk()">
+    Simpan Produk
+  </button>
+</div>
+
+<div class="card">
+  <h2>Daftar Produk</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Produk</th>
+          <th>Modal</th>
+          <th>Eceran</th>
+          <th>Reseller</th>
+        </tr>
+      </thead>
+
+      <tbody id="productTable"></tbody>
+    </table>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ================= PELANGGAN ================= -->
+<section id="pelanggan" class="section">
+
+<div class="card">
+  <h2>Tambah Pelanggan</h2>
+
+  <label>Nama</label>
+  <input id="customerName" placeholder="Nama pelanggan">
+
+  <label>No. HP</label>
+  <input id="customerPhone" placeholder="08xxxxxxxxxx">
+
+  <label>Alamat</label>
+  <textarea id="customerAddress"></textarea>
+
+  <label>Jenis</label>
+  <select id="customerType">
+    <option value="Eceran">Eceran</option>
+    <option value="Reseller">Reseller</option>
+    <option value="Toko">Toko</option>
+  </select>
+
+  <button class="success" onclick="simpanPelanggan()">
+    Simpan Pelanggan
+  </button>
+</div>
+
+<div class="card">
+  <h2>Daftar Pelanggan</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>No HP</th>
+          <th>Jenis</th>
+        </tr>
+      </thead>
+
+      <tbody id="customerTable"></tbody>
+    </table>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ================= SUPPLIER ================= -->
+<section id="supplier" class="section">
+
+<div class="card">
+  <h2>Tambah Supplier</h2>
+
+  <label>Nama Supplier</label>
+  <input id="supplierName" placeholder="Nama pembuat kue">
+
+  <label>No. HP</label>
+  <input id="supplierPhone" placeholder="08xxxxxxxxxx">
+
+  <label>Produk</label>
+  <input id="supplierProduct" placeholder="Jenis kue">
+
+  <button class="success" onclick="simpanSupplier()">
+    Simpan Supplier
+  </button>
+</div>
+
+<div class="card">
+  <h2>Daftar Supplier</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>No HP</th>
+          <th>Produk</th>
+        </tr>
+      </thead>
+
+      <tbody id="supplierTable"></tbody>
+    </table>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ================= PENGELUARAN ================= -->
+<section id="pengeluaran" class="section">
+
+<div class="card">
+  <h2>Tambah Pengeluaran</h2>
+
+  <label>Keterangan</label>
+  <input id="expenseName" placeholder="Contoh: Plastik, bensin, listrik">
+
+  <label>Jumlah</label>
+  <input id="expenseAmount" type="number" value="0">
+
+  <label>Catatan</label>
+  <textarea id="expenseNote"></textarea>
+
+  <button class="success" onclick="simpanPengeluaran()">
+    Simpan Pengeluaran
+  </button>
+</div>
+
+<div class="card">
+  <h2>Riwayat Pengeluaran</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Keterangan</th>
+          <th>Jumlah</th>
+        </tr>
+      </thead>
+
+      <tbody id="expenseTable"></tbody>
+    </table>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ================= LAPORAN ================= -->
+<section id="laporan" class="section">
+
+<div class="card">
+  <h2>Laporan Keseluruhan</h2>
+
+  <div class="stats">
+
+    <div class="stat">
+      <div class="stat-title">Total Omzet</div>
+      <div class="stat-value" id="reportOmzet">Rp0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title">Total Modal</div>
+      <div class="stat-value" id="reportModal">Rp0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title">Laba Kotor</div>
+      <div class="stat-value" id="reportProfit">Rp0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title">Pengeluaran</div>
+      <div class="stat-value" id="reportExpense">Rp0</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="card">
+  <h2>Laporan Harian</h2>
+
+  <label>Pilih tanggal</label>
+  <input id="dailyDate" type="date" onchange="laporanHarian()">
+
+  <div class="result-box">
+    <div class="result-line">
+      <span>Jumlah terjual</span>
+      <b id="dailyQty">0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Omzet</span>
+      <b id="dailyOmzet">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Laba</span>
+      <b id="dailyProfit">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Pengeluaran</span>
+      <b id="dailyExpense">Rp0</b>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Laporan Bulanan</h2>
+
+  <label>Pilih bulan</label>
+  <input id="monthlyMonth" type="month" onchange="laporanBulanan()">
+
+  <div class="result-box">
+    <div class="result-line">
+      <span>Jumlah terjual</span>
+      <b id="monthlyQty">0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Omzet</span>
+      <b id="monthlyOmzet">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Laba</span>
+      <b id="monthlyProfit">Rp0</b>
+    </div>
+
+    <div class="result-line">
+      <span>Pengeluaran</span>
+      <b id="monthlyExpense">Rp0</b>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ================= PENGATURAN ================= -->
+<section id="pengaturan" class="section">
+
+<div class="card">
+  <h2>Data & Pengaturan</h2>
+
+  <div class="alert alert-info">
+    Gunakan backup secara berkala agar data KueManager tidak hilang.
+  </div>
+
+  <button class="primary" onclick="backupData()">
+    💾 Backup Data
+  </button>
+
+  <br><br>
+
+  <label>Restore Data</label>
+  <input
+    type="file"
+    id="restoreFile"
+    accept=".json"
+  >
+
+  <button class="secondary" onclick="restoreData()">
+    ♻️ Restore Data
+  </button>
+
+  <br><br>
+
+  <button class="danger" onclick="resetData()">
+    🗑️ Hapus Semua Data
+  </button>
+</div>
+
+<div class="card">
+  <h2>Informasi</h2>
+
+  <p><b>Nama usaha:</b> Hikmah Kue</p>
+  <p><b>Aplikasi:</b> KueManager</p>
+  <p><b>Versi:</b> PWA V1</p>
+</div>
+
+</section>
+
+</div>
+
+<footer>
+  KueManager • Hikmah Kue
+</footer>
+
+
+<script>
+(function(){
+
+"use strict";
+
+var STORAGE_KEY = "hikmahKuePWA";
+
+var defaultData = {
+  products: [
+    {
+      id: Date.now(),
+      name: "Roti Semangka",
+      cost: 1600,
+      retail: 2000,
+      reseller: 1700
+    }
+  ],
+
+  customers: [],
+
+  suppliers: [],
+
+  stock: [],
+
+  sales: [],
+
+  expenses: []
+};
+
+var dataKueManager;
+
+function loadData(){
+
+  try{
+
+    var saved = localStorage.getItem(STORAGE_KEY);
+
+    if(saved){
+
+      dataKueManager = JSON.parse(saved);
+
+      if(!dataKueManager.products)
+        dataKueManager.products = [];
+
+      if(!dataKueManager.customers)
+        dataKueManager.customers = [];
+
+      if(!dataKueManager.suppliers)
+        dataKueManager.suppliers = [];
+
+      if(!dataKueManager.stock)
+        dataKueManager.stock = [];
+
+      if(!dataKueManager.sales)
+        dataKueManager.sales = [];
+
+      if(!dataKueManager.expenses)
+        dataKueManager.expenses = [];
+
+    }else{
+
+      dataKueManager = JSON.parse(
+        JSON.stringify(defaultData)
+      );
+
+      saveData();
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    dataKueManager =
+      JSON.parse(JSON.stringify(defaultData));
+
+    saveData();
+  }
+}
+
+function saveData(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(dataKueManager)
+  );
+
+}
+
+function rupiah(number){
+
+  number = Number(number) || 0;
+
+  return new Intl.NumberFormat(
+    "id-ID",
+    {
+      style:"currency",
+      currency:"IDR",
+      maximumFractionDigits:0
+    }
+  ).format(number);
+
+}
+
+function today(){
+
+  var d = new Date();
+
+  var y = d.getFullYear();
+
+  var m = String(d.getMonth()+1).padStart(2,"0");
+
+  var day = String(d.getDate()).padStart(2,"0");
+
+  return y+"-"+m+"-"+day;
+
+}
+
+function monthNow(){
+
+  return today().substring(0,7);
+
+}
+
+function escapeHTML(text){
+
+  return String(text ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* ================= NAVIGASI ================= */
+
+window.showSection = function(id, button){
+
+  document.querySelectorAll(".section")
+    .forEach(function(section){
+      section.classList.remove("active");
+    });
+
+  document.querySelectorAll(".menu button")
+    .forEach(function(btn){
+      btn.classList.remove("active");
+    });
+
+  document.getElementById(id)
+    .classList.add("active");
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  refreshAll();
+
+};
+
+
+/* ================= PRODUK ================= */
+
+function renderProductOptions(){
+
+  var sale = document.getElementById("saleProduct");
+
+  var stock = document.getElementById("stockProduct");
+
+  sale.innerHTML = "";
+
+  stock.innerHTML = "";
+
+  dataKueManager.products.forEach(function(product){
+
+    var option1 = document.createElement("option");
+
+    option1.value = product.id;
+
+    option1.textContent = product.name;
+
+    sale.appendChild(option1);
+
+    var option2 = document.createElement("option");
+
+    option2.value = product.id;
+
+    option2.textContent = product.name;
+
+    stock.appendChild(option2);
+
+  });
+
+  updateSalePrice();
+
+}
+
+window.updateSalePrice = function(){
+
+  var id = Number(
+    document.getElementById("saleProduct").value
+  );
+
+  var product = dataKueManager.products.find(
+    function(p){
+      return Number(p.id) === id;
+    }
+  );
+
+  if(product){
+
+    document.getElementById("saleCost").value =
+      product.cost;
+
+    var type =
+      document.getElementById("saleType").value;
+
+    if(type === "Reseller" || type === "Toko"){
+
+      document.getElementById("salePrice").value =
+        product.reseller;
+
+    }else{
+
+      document.getElementById("salePrice").value =
+        product.retail;
+
+    }
+
+  }
+
+  hitungPenjualan();
+
+};
+
+function renderProducts(){
+
+  var tbody =
+    document.getElementById("productTable");
+
+  tbody.innerHTML = "";
+
+  if(dataKueManager.products.length === 0){
+
+    tbody.innerHTML =
+      '<tr><td colspan="4" class="empty">Belum ada produk</td></tr>';
+
+    return;
+  }
+
+  dataKueManager.products.forEach(function(product){
+
+    var row = document.createElement("tr");
+
+    row.innerHTML =
+      "<td>"+escapeHTML(product.name)+"</td>"+
+      "<td>"+rupiah(product.cost)+"</td>"+
+      "<td>"+rupiah(product.retail)+"</td>"+
+      "<td>"+rupiah(product.reseller)+"</td>";
+
+    tbody.appendChild(row);
+
+  });
+
+}
+
+window.simpanProduk = function(){
+
+  var name =
+    document.getElementById("productName").value.trim();
+
+  var cost =
+    Number(document.getElementById("productCost").value);
+
+  var retail =
+    Number(document.getElementById("productRetail").value);
+
+  var reseller =
+    Number(document.getElementById("productReseller").value);
+
+  if(!name){
+
+    alert("Nama produk wajib diisi.");
+
+    return;
+  }
+
+  dataKueManager.products.push({
+
+    id:Date.now(),
+
+    name:name,
+
+    cost:cost,
+
+    retail:retail,
+
+    reseller:reseller
+
+  });
+
+  saveData();
+
+  document.getElementById("productName").value = "";
+
+  renderProductOptions();
+
+  renderProducts();
+
+  alert("Produk berhasil disimpan.");
+
+};
+
+
+/* ================= PELANGGAN ================= */
+
+function renderCustomerOptions(){
+
+  var select =
+    document.getElementById("saleCustomer");
+
+  select.innerHTML =
+    '<option value="">-- Tanpa pelanggan --</option>';
+
+  dataKueManager.customers.forEach(function(customer){
+
+    var option =
+      document.createElement("option");
+
+    option.value = customer.id;
+
+    option.textContent =
+      customer.name+" - "+customer.type;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+function renderCustomers(){
+
+  var tbody =
+    document.getElementById("customerTable");
+
+  tbody.innerHTML = "";
+
+  if(dataKueManager.customers.length === 0){
+
+    tbody.innerHTML =
+      '<tr><td colspan="3" class="empty">Belum ada pelanggan</td></tr>';
+
+    return;
+  }
+
+  dataKueManager.customers.forEach(function(customer){
+
+    var row = document.createElement("tr");
+
+    row.innerHTML =
+      "<td>"+escapeHTML(customer.name)+"</td>"+
+      "<td>"+escapeHTML(customer.phone)+"</td>"+
+      "<td>"+escapeHTML(customer.type)+"</td>";
+
+    tbody.appendChild(row);
+
+  });
+
+}
+
+window.simpanPelanggan = function(){
+
+  var name =
+    document.getElementById("customerName").value.trim();
+
+  var phone =
+    document.getElementById("customerPhone").value.trim();
+
+  var address =
+    document.getElementById("customerAddress").value.trim();
+
+  var type =
+    document.getElementById("customerType").value;
+
+  if(!name){
+
+    alert("Nama pelanggan wajib diisi.");
+
+    return;
+  }
+
+  dataKueManager.customers.push({
+
+    id:Date.now(),
+
+    name:name,
+
+    phone:phone,
+
+    address:address,
+
+    type:type
+
+  });
+
+  saveData();
+
+  document.getElementById("customerName").value = "";
+
+  document.getElementById("customerPhone").value = "";
+
+  document.getElementById("customerAddress").value = "";
+
+  renderCustomerOptions();
+
+  renderCustomers();
+
+  alert("Pelanggan berhasil disimpan.");
+
+};
+
+
+/* ================= SUPPLIER ================= */
+
+function renderSupplierOptions(){
+
+  var select =
+    document.getElementById("stockSupplier");
+
+  select.innerHTML =
+    '<option value="">-- Pilih supplier --</option>';
+
+  dataKueManager.suppliers.forEach(function(supplier){
+
+    var option =
+      document.createElement("option");
+
+    option.value = supplier.id;
+
+    option.textContent = supplier.name;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+function renderSuppliers(){
+
+  var tbody =
+    document.getElementById("supplierTable");
+
+  tbody.innerHTML = "";
+
+  if(dataKueManager.suppliers.length === 0){
+
+    tbody.innerHTML =
+      '<tr><td colspan="3" class="empty">Belum ada supplier</td></tr>';
+
+    return;
+  }
+
+  dataKueManager.suppliers.forEach(function(supplier){
+
+    var row = document.createElement("tr");
+
+    row.innerHTML =
+      "<td>"+escapeHTML(supplier.name)+"</td>"+
+      "<td>"+escapeHTML(supplier.phone)+"</td>"+
+      "<td>"+escapeHTML(supplier.product)+"</td>";
+
+    tbody.appendChild(row);
+
+  });
+
+}
+
+window.simpanSupplier = function(){
+
+  var name =
+    document.getElementById("supplierName").value.trim();
+
+  var phone =
+    document.getElementById("supplierPhone").value.trim();
+
+  var product =
+    document.getElementById("supplierProduct").value.trim();
+
+  if(!name){
+
+    alert("Nama supplier wajib diisi.");
+
+    return;
+  }
+
+  dataKueManager.suppliers.push({
+
+    id:Date.now(),
+
+    name:name,
+
+    phone:phone,
+
+    product:product
+
+  });
+
+  saveData();
+
+  document.getElementById("supplierName").value = "";
+
+  document.getElementById("supplierPhone").value = "";
+
+  document.getElementById("supplierProduct").value = "";
+
+  renderSupplierOptions();
+
+  renderSuppliers();
+
+  alert("Supplier berhasil disimpan.");
+
+};
+
+
+/* ================= STOK ================= */
+
+function getStock(productId){
+
+  return dataKueManager.stock
+    .filter(function(item){
+
+      return Number(item.productId) === Number(productId);
+
+    })
+    .reduce(function(total,item){
+
+      return total + Number(item.qty);
+
+    },0);
+
+}
+
+window.simpanStok = function(){
+
+  var productId =
+    Number(document.getElementById("stockProduct").value);
+
+  var qty =
+    Number(document.getElementById("stockQty").value);
+
+  var cost =
+    Number(document.getElementById("stockCost").value);
+
+  var supplierId =
+    document.getElementById("stockSupplier").value;
+
+  if(!qty || qty <= 0){
+
+    alert("Jumlah stok tidak valid.");
+
+    return;
+  }
+
+  dataKueManager.stock.push({
+
+    id:Date.now(),
+
+    date:today(),
+
+    productId:productId,
+
+    qty:qty,
+
+    cost:cost,
+
+    supplierId:supplierId
+
+  });
+
+  saveData();
+
+  renderStock();
+
+  updateDashboard();
+
+  alert("Stok berhasil ditambahkan.");
+
+};
+
+function renderStock(){
+
+  var container =
+    document.getElementById("stockList");
+
+  container.innerHTML = "";
+
+  if(dataKueManager.products.length === 0){
+
+    container.innerHTML =
+      '<div class="empty">Belum ada produk.</div>';
+
+    return;
+  }
+
+  dataKueManager.products.forEach(function(product){
+
+    var stock =
+      getStock(product.id);
+
+    var sold =
+      dataKueManager.sales
+      .filter(function(sale){
+
+        return Number(sale.productId) ===
+          Number(product.id);
+
+      })
+      .reduce(function(total,sale){
+
+        return total + Number(sale.qty);
+
+      },0);
+
+    var current =
+      Math.max(0,stock - sold);
+
+    var status =
+      current <= 10
+        ? '<span class="badge red">Stok sedikit</span>'
+        : '<span class="badge green">Aman</span>';
+
+    container.innerHTML +=
+      '<div class="result-box">'+
+
+      '<div class="result-line">'+
+      '<b>'+escapeHTML(product.name)+'</b>'+
+      status+
+      '</div>'+
+
+      '<div class="result-line">'+
+      '<span>Stok tersedia</span>'+
+      '<b>'+current+' biji</b>'+
+      '</div>'+
+
+      '</div>';
+
+  });
+
+}
+
+
+/* ================= PENJUALAN ================= */
+
+window.hitungPenjualan = function(){
+
+  var qty =
+    Number(document.getElementById("saleQty").value);
+
+  var price =
+    Number(document.getElementById("salePrice").value);
+
+  var cost =
+    Number(document.getElementById("saleCost").value);
+
+  var total =
+    qty * price;
+
+  var totalCost =
+    qty * cost;
+
+  var profit =
+    total - totalCost;
+
+  document.getElementById("saleTotal").textContent =
+    rupiah(total);
+
+  document.getElementById("saleTotalCost").textContent =
+    rupiah(totalCost);
+
+  document.getElementById("saleProfit").textContent =
+    rupiah(profit);
+
+};
+
+window.simpanPenjualan = function(){
+
+  var productId =
+    Number(document.getElementById("saleProduct").value);
+
+  var qty =
+    Number(document.getElementById("saleQty").value);
+
+  var price =
+    Number(document.getElementById("salePrice").value);
+
+  var cost =
+    Number(document.getElementById("saleCost").value);
+
+  var customerId =
+    document.getElementById("saleCustomer").value;
+
+  var type =
+    document.getElementById("saleType").value;
+
+  var note =
+    document.getElementById("saleNote").value.trim();
+
+  if(!qty || qty <= 0){
+
+    alert("Jumlah penjualan tidak valid.");
+
+    return;
+  }
+
+  var available =
+    getStock(productId);
+
+  var alreadySold =
+    dataKueManager.sales
+    .filter(function(sale){
+
+      return Number(sale.productId) ===
+        productId;
+
+    })
+    .reduce(function(total,sale){
+
+      return total + Number(sale.qty);
+
+    },0);
+
+  var currentStock =
+    available - alreadySold;
+
+  if(qty > currentStock){
+
+    var lanjut =
+      confirm(
+        "Stok tercatat hanya "+
+        currentStock+
+        " biji.\n\nTetap simpan penjualan?"
+      );
+
+    if(!lanjut) return;
+
+  }
+
+  dataKueManager.sales.push({
+
+    id:Date.now(),
+
+    date:today(),
+
+    productId:productId,
+
+    qty:qty,
+
+    price:price,
+
+    cost:cost,
+
+    customerId:customerId,
+
+    type:type,
+
+    note:note
+
+  });
+
+  saveData();
+
+  document.getElementById("saleQty").value = 1;
+
+  document.getElementById("saleNote").value = "";
+
+  renderSales();
+
+  updateDashboard();
+
+  renderStock();
+
+  laporanHarian();
+
+  laporanBulanan();
+
+  alert("Penjualan berhasil disimpan.");
+
+};
+
+function renderSales(){
+
+  var tbody =
+    document.getElementById("salesTable");
+
+  tbody.innerHTML = "";
+
+  var search =
+    document.getElementById("searchSales").value
+    .toLowerCase();
+
+  var sales =
+    dataKueManager.sales
+    .slice()
+    .reverse();
+
+  sales.forEach(function(sale){
+
+    var product =
+      dataKueManager.products.find(
+        function(p){
+          return Number(p.id) ===
+            Number(sale.productId);
+        }
+      );
+
+    var name =
+      product ? product.name : "Produk dihapus";
+
+    var text =
+      (
+        name+
+        " "+
+        sale.type+
+        " "+
+        sale.note
+      ).toLowerCase();
+
+    if(search && !text.includes(search))
+      return;
+
+    var total =
+      Number(sale.qty) *
+      Number(sale.price);
+
+    var profit =
+      Number(sale.qty) *
+      (Number(sale.price) -
+       Number(sale.cost));
+
+    var row =
+      document.createElement("tr");
+
+    row.innerHTML =
+      "<td>"+sale.date+"</td>"+
+      "<td>"+escapeHTML(name)+"</td>"+
+      "<td>"+sale.qty+"</td>"+
+      "<td>"+rupiah(total)+"</td>"+
+      "<td>"+rupiah(profit)+"</td>";
+
+    tbody.appendChild(row);
+
+  });
+
+  if(!tbody.children.length){
+
+    tbody.innerHTML =
+      '<tr><td colspan="5" class="empty">Belum ada penjualan</td></tr>';
+
+  }
+
+}
+
+
+/* ================= PENGELUARAN ================= */
+
+window.simpanPengeluaran = function(){
+
+  var name =
+    document.getElementById("expenseName")
+      .value.trim();
+
+  var amount =
+    Number(
+      document.getElementById("expenseAmount").value
+    );
+
+  var note =
+    document.getElementById("expenseNote")
+      .value.trim();
+
+  if(!name){
+
+    alert("Keterangan wajib diisi.");
+
+    return;
+  }
+
+  if(!amount || amount <= 0){
+
+    alert("Jumlah pengeluaran tidak valid.");
+
+    return;
+  }
+
+  dataKueManager.expenses.push({
+
+    id:Date.now(),
+
+    date:today(),
+
+    name:name,
+
+    amount:amount,
+
+    note:note
+
+  });
+
+  saveData();
+
+  document.getElementById("expenseName").value = "";
+
+  document.getElementById("expenseAmount").value = 0;
+
+  document.getElementById("expenseNote").value = "";
+
+  renderExpenses();
+
+  updateDashboard();
+
+  laporanHarian();
+
+  laporanBulanan();
+
+  alert("Pengeluaran berhasil disimpan.");
+
+};
+
+function renderExpenses(){
+
+  var tbody =
+    document.getElementById("expenseTable");
+
+  tbody.innerHTML = "";
+
+  dataKueManager.expenses
+    .slice()
+    .reverse()
+    .forEach(function(expense){
+
+      var row =
+        document.createElement("tr");
+
+      row.innerHTML =
+        "<td>"+expense.date+"</td>"+
+        "<td>"+escapeHTML(expense.name)+"</td>"+
+        "<td>"+rupiah(expense.amount)+"</td>";
+
+      tbody.appendChild(row);
+
+    });
+
+  if(!tbody.children.length){
+
+    tbody.innerHTML =
+      '<tr><td colspan="3" class="empty">Belum ada pengeluaran</td></tr>';
+
+  }
+
+}
+
+
+/* ================= DASHBOARD ================= */
+
+function updateDashboard(){
+
+  var date =
+    today();
+
+  var totalStock =
+    dataKueManager.products.reduce(
+      function(total,product){
+
+        return total +
+          Math.max(
+            0,
+            getStock(product.id) -
+            dataKueManager.sales
+              .filter(function(sale){
+
+                return Number(sale.productId) ===
+                  Number(product.id);
+
+              })
+              .reduce(function(sum,sale){
+
+                return sum + Number(sale.qty);
+
+              },0)
+          );
+
+      },0
+    );
+
+  var salesToday =
+    dataKueManager.sales
+      .filter(function(sale){
+
+        return sale.date === date;
+
+      });
+
+  var sold =
+    salesToday.reduce(
+      function(total,sale){
+
+        return total + Number(sale.qty);
+
+      },0
+    );
+
+  var omzet =
+    salesToday.reduce(
+      function(total,sale){
+
+        return total +
+          Number(sale.qty) *
+          Number(sale.price);
+
+      },0
+    );
+
+  var modal =
+    salesToday.reduce(
+      function(total,sale){
+
+        return total +
+          Number(sale.qty) *
+          Number(sale.cost);
+
+      },0
+    );
+
+  var profit =
+    omzet - modal;
+
+  var expense =
+    dataKueManager.expenses
+      .filter(function(item){
+
+        return item.date === date;
+
+      })
+      .reduce(function(total,item){
+
+        return total + Number(item.amount);
+
+      },0);
+
+  var cash =
+    profit - expense;
+
+  document.getElementById("dashStock").textContent =
+    totalStock;
+
+  document.getElementById("dashSold").textContent =
+    sold;
+
+  document.getElementById("dashOmzet").textContent =
+    rupiah(omzet);
+
+  document.getElementById("dashProfit").textContent =
+    rupiah(profit);
+
+  document.getElementById("dashExpense").textContent =
+    rupiah(expense);
+
+  document.getElementById("dashCash").textContent =
+    rupiah(cash);
+
+  document.getElementById("todayOmzet").textContent =
+    rupiah(omzet);
+
+  document.getElementById("todayModal").textContent =
+    rupiah(modal);
+
+  document.getElementById("todayProfit").textContent =
+    rupiah(profit);
+
+  document.getElementById("todayExpense").textContent =
+    rupiah(expense);
+
+  document.getElementById("todayCash").textContent =
+    rupiah(cash);
+
+}
+
+
+/* ================= LAPORAN ================= */
+
+function laporanKeseluruhan(){
+
+  var omzet = 0;
+
+  var modal = 0;
+
+  dataKueManager.sales.forEach(function(sale){
+
+    omzet +=
+      Number(sale.qty) *
+      Number(sale.price);
+
+    modal +=
+      Number(sale.qty) *
+      Number(sale.cost);
+
+  });
+
+  var expense =
+    dataKueManager.expenses.reduce(
+      function(total,item){
+
+        return total + Number(item.amount);
+
+      },0
+    );
+
+  var profit =
+    omzet - modal;
+
+  document.getElementById("reportOmzet").textContent =
+    rupiah(omzet);
+
+  document.getElementById("reportModal").textContent =
+    rupiah(modal);
+
+  document.getElementById("reportProfit").textContent =
+    rupiah(profit);
+
+  document.getElementById("reportExpense").textContent =
+    rupiah(expense);
+
+}
+
+window.laporanHarian = function(){
+
+  var date =
+    document.getElementById("dailyDate").value;
+
+  if(!date) return;
+
+  var sales =
+    dataKueManager.sales.filter(
+      function(sale){
+
+        return sale.date === date;
+
+      }
+    );
+
+  var qty =
+    sales.reduce(
+      function(total,sale){
+
+        return total + Number(sale.qty);
+
+      },0
+    );
+
+  var omzet =
+    sales.reduce(
+      function(total,sale){
+
+        return total +
+          Number(sale.qty) *
+          Number(sale.price);
+
+      },0
+    );
+
+  var profit =
+    sales.reduce(
+      function(total,sale){
+
+        return total +
+          Number(sale.qty) *
+          (
+            Number(sale.price) -
+            Number(sale.cost)
+          );
+
+      },0
+    );
+
+  var expense =
+    dataKueManager.expenses
+      .filter(function(item){
+
+        return item.date === date;
+
+      })
+      .reduce(function(total,item){
+
+        return total + Number(item.amount);
+
+      },0);
+
+  document.getElementById("dailyQty").textContent =
+    qty;
+
+  document.getElementById("dailyOmzet").textContent =
+    rupiah(omzet);
+
+  document.getElementById("dailyProfit").textContent =
+    rupiah(profit);
+
+  document.getElementById("dailyExpense").textContent =
+    rupiah(expense);
+
+};
+
+window.laporanBulanan = function(){
+
+  var month =
+    document.getElementById("monthlyMonth").value;
+
+  if(!month) return;
+
+  var sales =
+    dataKueManager.sales.filter(
+      function(sale){
+
+        return sale.date.substring(0,7) ===
+          month;
+
+      }
+    );
+
+  var qty =
+    sales.reduce(
+      function(total,sale){
+
+        return total + Number(sale.qty);
+
+      },0
+    );
+
+  var omzet =
+    sales.reduce(
+      function(total,sale){
+
+        return total +
+          Number(sale.qty) *
+          Number(sale.price);
+
+      },0
+    );
+
+  var profit =
+    sales.reduce(
+      function(total,sale){
+
+        return total +
+          Number(sale.qty) *
+          (
+            Number(sale.price) -
+            Number(sale.cost)
+          );
+
+      },0
+    );
+
+  var expense =
+    dataKueManager.expenses
+      .filter(function(item){
+
+        return item.date.substring(0,7) ===
+          month;
+
+      })
+      .reduce(function(total,item){
+
+        return total + Number(item.amount);
+
+      },0);
+
+  document.getElementById("monthlyQty").textContent =
+    qty;
+
+  document.getElementById("monthlyOmzet").textContent =
+    rupiah(omzet);
+
+  document.getElementById("monthlyProfit").textContent =
+    rupiah(profit);
+
+  document.getElementById("monthlyExpense").textContent =
+    rupiah(expense);
+
+};
+
+
+/* ================= BACKUP ================= */
+
+window.backupData = function(){
+
+  var json =
+    JSON.stringify(
+      dataKueManager,
+      null,
+      2
+    );
+
+  var blob =
+    new Blob(
+      [json],
+      {
+        type:"application/json"
+      }
+    );
+
+  var url =
+    URL.createObjectURL(blob);
+
+  var a =
+    document.createElement("a");
+
+  a.href = url;
+
+  a.download =
+    "backup-KueManager-"+today()+".json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+};
+
+window.restoreData = function(){
+
+  var input =
+    document.getElementById("restoreFile");
+
+  if(!input.files.length){
+
+    alert("Pilih file backup terlebih dahulu.");
+
+    return;
+  }
+
+  var file =
+    input.files[0];
+
+  var reader =
+    new FileReader();
+
+  reader.onload =
+    function(event){
+
+      try{
+
+        var restored =
+          JSON.parse(event.target.result);
+
+        if(
+          !restored.products ||
+          !restored.sales ||
+          !restored.stock
+        ){
+
+          throw new Error("Format tidak valid");
+
+        }
+
+        if(
+          confirm(
+            "Restore data akan mengganti data saat ini. Lanjutkan?"
+          )
+        ){
+
+          dataKueManager = restored;
+
+          saveData();
+
+          refreshAll();
+
+          alert("Data berhasil dipulihkan.");
+
+        }
+
+      }catch(error){
+
+        alert("File backup tidak valid.");
+
+      }
+
+    };
+
+  reader.readAsText(file);
+
+};
+
+
+/* ================= RESET ================= */
+
+window.resetData = function(){
+
+  var confirm1 =
+    confirm(
+      "PERINGATAN!\n\nSemua data KueManager akan dihapus.\n\nLanjutkan?"
+    );
+
+  if(!confirm1) return;
+
+  var confirm2 =
+    confirm(
+      "Yakin benar-benar ingin menghapus semua data?"
+    );
+
+  if(!confirm2) return;
+
+  dataKueManager =
+    JSON.parse(
+      JSON.stringify(defaultData)
+    );
+
+  saveData();
+
+  refreshAll();
+
+  alert("Semua data berhasil dihapus.");
+
+};
+
+
+/* ================= REFRESH ================= */
+
+function refreshAll(){
+
+  renderProductOptions();
+
+  renderCustomerOptions();
+
+  renderSupplierOptions();
+
+  renderProducts();
+
+  renderCustomers();
+
+  renderSuppliers();
+
+  renderStock();
+
+  renderSales();
+
+  renderExpenses();
+
+  updateDashboard();
+
+  laporanKeseluruhan();
+
+  laporanHarian();
+
+  laporanBulanan();
+
+}
+
+
+/* ================= INIT ================= */
+
+loadData();
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    document.getElementById("dailyDate").value =
+      today();
+
+    document.getElementById("monthlyMonth").value =
+      monthNow();
+
+    document.getElementById("saleProduct")
+      .addEventListener(
+        "change",
+        updateSalePrice
+      );
+
+    document.getElementById("saleType")
+      .addEventListener(
+        "change",
+        updateSalePrice
+      );
+
+    document.getElementById("saleQty")
+      .addEventListener(
+        "input",
+        hitungPenjualan
+      );
+
+    document.getElementById("salePrice")
+      .addEventListener(
+        "input",
+        hitungPenjualan
+      );
+
+    document.getElementById("saleCost")
+      .addEventListener(
+        "input",
+        hitungPenjualan
+      );
+
+    refreshAll();
+
+    hitungPenjualan();
+
+  }
+);
+
+
+/* ================= PWA SERVICE WORKER ================= */
+
+if("serviceWorker" in navigator){
+
+  window.addEventListener(
+    "load",
+    function(){
+
+      navigator.serviceWorker
+        .register("./service-worker.js")
+        .then(function(){
+
+          console.log(
+            "KueManager PWA aktif."
+          );
+
+        })
+        .catch(function(error){
+
+          console.log(
+            "Service Worker gagal:",
+            error
+          );
+
+        });
+
+    }
+  );
+
+}
+
+})();
+</script>
+
+</body>
+  </html>
